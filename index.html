@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tu Empresa - Simula Tu Crédito</title>
+    <style>
+        body {
+            background: url('textura1.PNG') repeat;
+            margin: 0;
+            padding: 0;
+            font-family: 'Times New Roman', Times, serif, sans-serif;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 90vh;
+            opacity: 0;
+            animation: fadeIn 2s ease forwards;
+        }
+        #logo {
+            max-width: 100%;
+            height: auto;
+        }
+        #simula-button {
+            background-color: #D1A212;
+            color: #000000;
+            padding: 10px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            text-decoration: none;
+            cursor: pointer;
+            opacity: 0;
+            animation: fadeInButton 2s ease forwards;
+        }
+        @keyframes fadeIn {
+            100% {
+                opacity: 1;
+            }
+        }
+        @keyframes fadeInButton {
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img id="logo" src="p.png" alt="Logo de Tu Empresa">
+        <a id="simula-button" href="pagina-2.html" onclick="animar()">CONOCENOS</a>
+    </div>
+
+    <script>
+        function animar() {
+            const container = document.querySelector('.container');
+            container.style.animation = 'fadeOut 1s ease forwards';
+            setTimeout(function () {
+                window.location.href = 'pagina-2.html';
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

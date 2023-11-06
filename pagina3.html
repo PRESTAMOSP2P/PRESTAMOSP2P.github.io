@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página 3 - Simulador de Crédito</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif, sans-serif;
+            text-align: center;
+            background-image: url('textura3.PNG'); /* Cambia 'ruta-a-tu-textura.jpg' a la ruta de tu textura */
+            background-size: cover;
+        }
+        #logo {
+            max-width: 180px;
+            height: auto;
+            margin: 20px auto;
+            animation: fadeIn 2s ease-in-out;
+        }
+        h2 {
+            font-size: 40px;
+            color: #D1A212; /* Cambia el color del texto aquí */
+            animation: fadeIn 2s ease-in-out;
+        }
+        .simulator {
+            max-width: 400px;
+            margin: 0 auto;
+            animation: fadeIn 2s ease-in-out;
+        }
+        .input-group {
+            margin: 10px 0;
+        }
+        .input-label {
+            display: block;
+            color: #D1A212; /* Cambia el color del texto aquí */
+            font-size: 20px; /* Cambia el tamaño del texto aquí */
+        }
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px; /* Cambia el tamaño del texto aquí */
+        }
+        .results {
+            margin: 20px auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            max-width: 400px;
+            color: #D1A212; /* Cambia el color del texto aquí */
+            font-size: 30px; /* Cambia el tamaño del texto aquí */
+        }
+        #calcular-button {
+            background-color: #D1A212;
+            color: #000000;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            text-decoration: none;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+            animation: fadeIn 2s ease-in-out;
+            font-family: 'Times New Roman', Times, serif, sans-serif
+        }
+        #solicitar-button {
+            background-color: #D1A212;
+            color: #000000;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            text-decoration: none;
+            cursor: pointer;
+            display: none;
+            margin: 20px auto;
+        }
+
+        /* Animación de desvanecimiento */
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <img id="logo" src="logo.png" alt="Logo de Tu Empresa">
+    <h2>¿Sabes cuánto dinero necesitas?</h2>
+    <div class="simulator">
+        <div class="input-group">
+            <label class="input-label" for="monto">MONTO DEL CRÉDITO ($)</label>
+            <input class="input-field" type="number" id="monto" min="100000" placeholder=" Minimo $100,000">
+        </div>
+        <div class="input-group">
+            <label class="input-label" for="plazo">PLAZO (en meses)</label>
+            <input class="input-field" type="number" id="plazo" min="1" max="36" placeholder="De 1 a 36 meses">
+        </div>
+        <div class="input-group">
+            <label class="input-label" for="periodicidad">PERIODICIDAD</label>
+            <select class="input-field" id="periodicidad">
+                <option value="mensual">Mensual</option>
+                <option value="quincenal">Quincenal</option>
+                <option value="semanal">Semanal</option>
+                <option value="diaria">Diaria</option>
+            </select>
+        </div>
+        <button id="calcular-button">Calcular Cuotas</button>
+        <div class="results" id="results">
+            <!-- Aquí se mostrarán los resultados -->
+        </div>
+        <a href="https://api.whatsapp.com/send?phone=573143127615&text=QUIERO%20UN%20CREDITO" id="solicitar-button" target="_blank">SOLICITAR CRÉDITO</a>
+    </div>
+    <script>
+        const calcularButton = document.getElementById("calcular-button");
+        const montoInput = document.getElementById("monto");
+        const plazoInput = document.getElementById("plazo");
+        const periodicidadSelect = document.getElementById("periodicidad");
+        const resultsContainer = document.getElementById("results");
+        const solicitarButton = document.getElementById("solicitar-button");
+
+        calcularButton.addEventListener("click", function() {
+            const monto = parseFloat(montoInput.value);
+            const plazo = parseInt(plazoInput.value);
+            const periodicidad = periodicidadSelect.value;
+
+            // Calcular cuota con amortización de cuota fija y tasa de interés variable
+            const cuota = calcularCuota(monto, plazo, periodicidad);
+            const cantidadCuotas = calcularCantidadCuotas(plazo, periodicidad);
+
+            // Mostrar los resultados en el contenedor de resultados
+            resultsContainer.innerHTML = `
+                <h3>Resultados</h3>
+                <p>Cuota: $${cuota.toFixed(2)}</p>
+                <p>Cantidad de Cuotas: ${cantidadCuotas}</p>
+            `;
+
+            // Mostrar el botón "SOLICITAR CRÉDITO" después de calcular
+            solicitarButton.style.display = "block";
+        });
+
+        // Función para calcular la cuota con amortización de cuota fija y tasa de interés variable
+        function calcularCuota(monto, plazo, periodicidad) {
+            let tasaInteres;
+
+            if (monto >= 100000 && monto <= 499999) {
+                tasaInteres = 0.20; // Tasa de interés del 20%
+            } else if (monto >= 500000 && monto <= 999999) {
+                tasaInteres = 0.15; // Tasa de interés del 15%
+            } else if (monto >= 1000000) {
+                tasaInteres = 0.10; // Tasa de interés del 10%
+            } else {
+                tasaInteres = 0.01; // Tasa de interés mensual (1%) por defecto
+            }
+
+            let cuota;
+
+            switch (periodicidad) {
+                case "mensual":
+                    cuota = (monto * tasaInteres) / (1 - Math.pow(1 + tasaInteres, -plazo));
+                    break;
+                case "quincenal":
+                    cuota = (monto * tasaInteres) / (1 - Math.pow(1 + tasaInteres, -plazo ))/2;
+                    break;
+                case "semanal":
+                    cuota = (monto * tasaInteres) / (1 - Math.pow(1 + tasaInteres, -plazo ))/4;
+                    break;
+                case "diaria":
+                    cuota = (monto * tasaInteres) / (1 - Math.pow(1 + tasaInteres, -plazo ))/30;
+                    break;
+                default:
+                    cuota = 0;
+            }
+
+            return cuota;
+        }
+
+        // Función para calcular la cantidad de cuotas según la periodicidad
+        function calcularCantidadCuotas(plazo, periodicidad) {
+            switch (periodicidad) {
+                case "mensual":
+                    return plazo;
+                case "quincenal":
+                    return plazo * 2;
+                case "semanal":
+                    return plazo * 4;
+                case "diaria":
+                    return plazo * 30;
+                default:
+                    return 0;
+            }
+        }
+    </script>
+</body>
+</html>
